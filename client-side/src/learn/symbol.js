@@ -113,4 +113,69 @@
 /* 相同的还有 Symbol.replace、Symbol.search 和 Symbol.split，使用方法和 Symbol.match 是一样的。 */
 
 
+
+// // (5) Symbol.iterator 迭代器
+// // 数组的 Symbol.iterator 属性指向该数组的默认遍历器方法：
+// const arr = [1, 2, 3];
+// const iterator = arr[Symbol.iterator]();
+// console.log(iterator);
+// console.log(iterator.next());
+// console.log(iterator.next());
+// console.log(iterator.next());
+// console.log(iterator.next());
+// // 这个 Symbol.iterator 方法是可写的，我们可以自定义遍历器方法。
+
+
+// (6) Symbol.toPrimitive
+// 对象的这个属性指向一个方法，当这个对象被转为原始类型值时会调用这个方法，这个方法有一个参数，是这个对象被转为的类型，我们来看下：
+// let obj = {
+//     [Symbol.toPrimitive](type) {
+//         console.log(type);
+//     }
+// }
+// const b = obj++; //number
+// const a = `abc${obj}`; //string
+// console.log(typeof b);
+// console.log(typeof a);
+
+
+
+// // (7) Symbol.toStringTag
+// // Symbol.toStringTag 和 Symbol.toPrimitive 相似，对象的这个属性的值可以是一个字符串，也可以是一个存取器 get 方法，当在对象上调用 toString 方法时调用这个方法，返回值将作为"[object xxx]"中 xxx 这个值：
+// let obj = {
+//     [Symbol.toStringTag]: "lison"
+// };
+// obj.toString(); //"[object lison]"
+// let obj2 = {
+//     get[Symbol.toStringTag]() {
+//         return "haha";
+//     }
+// }
+// obj2.toString(); //"[object haha]"
+
+
+// (8) Symbol.unscopables
+// 这个值和 with 命令有关，我们先来看下 with 怎么使用：
+// const obj = {
+//     a: "a",
+//     b: "b"
+// };
+// with(obj) {
+//     console.log(a);  //"a"
+//     console.log(b); //"b"
+// };
+// 严格模式下会报错
+// 可以看到，使用 with 传入一个对象后，在代码块中访问对象的属性就不需要写对象了，直接就可以用它的属性。对象的 Symbol.unscopables 属性指向一个对象，该对象包含了当使用 with 关键字时，哪些属性被 with 环境过滤掉：
+console.log(Array.prototype[Symbol.unscopables]);
+/* copyWithin: true
+entries: true
+fill: true
+find: true
+findIndex: true
+flat: true
+flatMap: true
+includes: true
+keys: true
+values: true */
+
 export {}
