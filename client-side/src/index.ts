@@ -1,4 +1,4 @@
-import "./learn/enum";
+import "./learn/interface";
 
 
 const h1 = document.createElement("h1");

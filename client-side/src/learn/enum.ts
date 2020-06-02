@@ -165,3 +165,45 @@
 /**
  * @运行时的枚举
  */
+// 枚举在编译成 JavaScript 之后实际是一个对象。这个我们前面讲过了，既然是对象，那么就可以当成对象来使用，我们来看个例子：
+// enum E {
+//     A,
+//     B
+// }
+// const getIndex = (enumObj: {A: number}): number => {
+//     return enumObj.A;
+// };
+// console.log(getIndex(E)); // 0
+// 上面这个例子要求 getIndex 的参数为一个对象，且必须包含一个属性名为’A’的属性，其值为数值类型，只要有这个属性即可。当我们调用这个函数，把枚举值 E 作为实参传入是可以的，因为它在运行的时候是一个对象，包含’A’这个属性，因为它在运行的时候相当于下面这个对象：
+// {
+//     0: "A",
+//     1: "B",
+//     A: 0,
+//     B: 1
+// }
+
+
+/**
+ * @常量枚举 const enum
+ */
+// 我们定义了枚举值之后，编译成 JavaScript 的代码会创建一个对应的对象，这个对象我们可以在程序运行的时候使用。但是如果我们使用枚举只是为了让程序可读性好，并不需要编译后的对象呢？这样会增加一些编译后的代码量。所以 TypeScript 在 1.4 新增 const enum*(完全嵌入的枚举)*，在之前讲的定义枚举的语句之前加上const关键字，这样编译后的代码不会创建这个对象，只是会从枚举里拿到相应的值进行替换，来看我们下面的定义：
+// enum Status {
+//     Off,
+//     On
+// }
+// const enum Animal {
+//     Dog,
+//     Cat
+// }
+// const status = Status.On;
+// const animal = Animal.Dog;
+
+// 上面的例子编译成 JavaScript 之后是这样的：
+// var Status;
+// (function(Status) {
+//   Status[(Status["Off"] = 0)] = "Off";
+//   Status[(Status["On"] = 1)] = "On";
+// })(Status || (Status = {}));
+// var status = Status.On;
+// var animal = 0; /* Dog */
+
