@@ -1,4 +1,4 @@
-import "./learn/interface";
+import "./learn/function";
 
 
 const h1 = document.createElement("h1");
