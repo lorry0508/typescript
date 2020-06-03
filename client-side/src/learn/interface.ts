@@ -76,19 +76,79 @@
 
 // (1)使用类型断言
 // 我们在基础类型中讲过，类型断言就是用来明确告诉 TypeScript，我们已经自行进行了检查，确保这个类型没有问题，希望 TypeScript 对此不进行检查，所以最简单的方式就是使用类型断言：
-interface Vegetables {
-    color?: string;
-    type: string
-}
-const getVegetables = ({color, type}: Vegetables) => {
-    return `A${color ? color + "" : ""}${type}`;
-};
-getVegetables({
-    type: "tomato",
-    size: 12,
-    price: 1.2
-} as Vegetables);
+// interface Vegetables {
+//     color?: string;
+//     type: string
+// }
+// const getVegetables = ({color, type}: Vegetables) => {
+//     return `A${color ? color + "" : ""}${type}`;
+// };
+// getVegetables({
+//     type: "tomato",
+//     size: 12,
+//     price: 1.2
+// } as Vegetables);
 
 // (2)添加索引标签
 // 更好的方式是添加字符串索引签名，索引签名我们会在后面讲解，先来看怎么实现：
+// interface Vegetables {
+//     color: string;
+//     type: string;
+//     [prop: string]: any
+// }
+// const getVegetables = ({color, type}: Vegetables) => {
+//     return `A${color ? color + "" : ""}${type}`;
+// };
+// getVegetables({
+//     color: "red",
+//     type: "tomato",
+//     size: 12,
+//     price: 1.2
+// });
 
+// (3)利用类型兼容性
+// 这种方法现在还不是很好理解，也是不推荐使用的，先来看写法：
+// interface Vegetables {
+//     type: string
+// }
+// const getVegetables = ({type}: Vegetables) => {
+//     return `A${type}`;
+// };
+// const option = {type: "tomato", size: 12};
+// getVegetables(option);
+// 上面这种方法完美通过检查，我们将对象字面量赋给一个变量option，然后getVegetables传入 option，这时没有报错。是因为直接将对象字面量传入函数，和先赋给变量再将变量传入函数，这两种检查机制是不一样的，后者是因为类型兼容性。我们后面会有专门一节来讲类型兼容性。简单地来说：如果 b 要赋值给 a，那要求 b 至少需要与 a 有相同的属性，多了无所谓。
+
+// 在上面这个例子中，option的类型应该是Vegetables类型，对象{ type: ‘tomato’, size: 12 }要赋值给 option，option中所有的属性在这个对象字面量中都有，所以这个对象的类型和option(也就是Vegetables类型)是兼容的，所以上面例子不会报错。如果你现在还想不明白没关系，我们还会在后面详细去讲。
+
+
+/**
+ * @只读属性
+ */
+// // 接口也可以设置只读属性，如下：
+// interface Role {
+//     readonly 0: string;
+//     readonly 1: string;
+// }
+// // 这里我们定义了一个角色字典，有 0 和 1 两种角色 id。下面我们定义一个实际的角色  数据，然后来试图修改一下它的值：
+// const role:Role = {
+//     0: "super_admin",
+//     1: "admin"
+// };
+// role[1] = "super_admin"; //Cannot assign to '0' because it is a read-only property
+
+// 我们看到 TypeScript 告诉我们不能分配给索引0，因为它是只读属性。设置一个值只读，我们是否想到ES6里定义常量的关键字const？使用const定义的常量定义之后不能再修改，这有点只读的意思。那readonly和const在使用时该如何选择呢？这主要看你这个值的用途，如果是定义一个常量，那用const，如果这个值是作为对象的属性，那请用readonly。我们来看下面的代码：
+// const NAME: string = "Lison";
+// NAME = "Haha"; // Cannot assign to 'NAME' because it is a constant.
+
+// const obj = {
+//     name: "Lison"
+// };
+// obj.name = "Haha";
+
+// interface Info {
+//     readonly name: string;
+// }
+// const info: Info = {
+//     name: "Lison"
+// };
+// info["name"] = "Haha"; // Cannot assign to 'name' because it is a read-only property.
