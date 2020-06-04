@@ -1,4 +1,4 @@
-import "./learn/generics";
+import "./learn/class";
 
 
 const h1 = document.createElement("h1");

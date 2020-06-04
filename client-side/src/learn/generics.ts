@@ -20,3 +20,126 @@
  * @简单使用
  */
 // 要解决上面这个场景的问题，就需要使用泛型了。泛型（Generics）是指在定义函数、接口或类的时候，不预先指定具体的类型，而在使用的时候再指定类型的一种特性。
+
+// 还拿上面这个例子中的逻辑来举例，我们既要允许传入任意类型的值，又要正确指定返回值类型，就要使用泛型。我们先来看怎么改写：
+// const getArray = <T>(value: T, times: number = 5): T[] => {
+//     return new Array(times).fill(value);
+// };
+// // 我们在定义函数之前，使用<>符号定义了一个泛型变量 T，这个 T 在这次函数定义中就代表某一种类型，它可以是基础类型，也可以是联合类型等高级类型。定义了泛型变量之后，你在函数中任何需要指定类型的地方使用 T 都代表这一种类型。比如当我们传入 value 的类型为数值类型，那么返回的数组类型T[]就表示number[]。现在我们再来调用一下这个 getArray 函数：
+// getArray<number[]>([1, 2], 3).forEach(item => {
+//     console.log(item.length);
+// });
+// getArray<number>(2, 3).forEach(item => {
+//     console.log(item.length); // 类型“number”上不存在属性“length”
+// });
+
+// 我们在调用 getArray 的时候，在方法名后面使用<>传入了我们的泛型变量 T 的类型number[]，那么在定义 getArray 函数时使用 T 指定类型的地方，都会使用number[]指定。但是你也可以省略这个<number[]>，TypeScript 会根据你传入函数的 value 值的类型进行推断：
+// getArray(2, 3).forEach(item => {
+//     console.log(item.length); //类型“number”上不存在属性“length”
+// });
+
+
+/**
+ * @泛型变量
+ */
+// 当我们使用泛型的时候，你必须在处理类型涉及到泛型的数据的时候，把这个数据当做任意类型来处理。这就意味着不是所有类型都能做的操作不能做，不是所有类型都能调用的方法不能调用。可能会有点绕口，我们来看个例子：
+// const getLength = <T>(param: T): number => {
+//     return param.length; //类型“T”上不存在属性“length”。
+// }
+// 当我们获取一个类型为泛型的变量 param 的 length 属性值时，如果 param 的类型为数组 Array 或字符串 string 类型是没问题的，它们有 length 属性。但是如果此时传入的 param 是数值 number 类型，那这里就会有问题了。
+
+// 这里的T并不是固定的，你可以写为A、B或者其他名字，而且还可以在一个函数中定义多个泛型变量。我们来看个复杂点的例子：
+
+// const getArray = <T, U>(param1: T, param2: U, times: number): [T, U][] => {
+//     return new Array(times).fill([param1, param2]);
+// };
+// getArray(1, "a", 3).forEach(item => {
+//     console.log(item[0].length); // error 类型“number”上不存在属性“length”
+//     console.log(item[1].toFixed(2)); // 属性“toFixed”在类型“string”上不存在
+// })
+
+// 这个例子中，我们定义了两个泛型变量T和U。第一个参数的类型为 T，第二个参数的类型为 U，最后函数返回一个二维数组，函数返回类型我们指定是一个元素类型为[T, U]的数组。所以当我们调用函数，最后遍历结果时，遍历到的每个元素都是一个第一个元素是数值类型、第二个元素是字符串类型的数组。
+
+/**
+ * @泛型函数类型
+ */
+// 我们可以定义一个泛型函数类型，还记得我们之前学习函数一节时，给一个函数定义函数类型，现在我们可以使用泛型定义函数类型：
+// ex1: 简单定义
+// const getArray: <T>(arg: T, times: number) => T[] = (arg, times) => {
+//     return new Array(times).fill(arg);
+// };
+// ex2: 使用类型别名
+// type GetArray = <T>(arg: T, times: number) => T[];
+// const getArray: GetArray = <T>(arg: T, times: number): T[] => {
+//     return new Array(times).fill(arg);
+// };
+
+//当然了，我们也可以使用接口的形式来定义泛型函数类型：
+// interface GetArray {
+//     <T>(arg: T, times: number): T[];
+// }
+// const getArray: GetArray = <T>(arg: T, times: number): T[] => {
+//     return new Array(times).fill(arg);
+// };
+
+// 你还可以把接口中泛型变量提升到接口最外层，这样接口中所有属性和方法都能使用这个泛型变量了。我们先来看怎么用：
+// interface GetArray<T> {
+//     (arg: T, times: number): T[];
+//     tag: T;
+// }
+// const getArray: GetArray<number> = <T>(arg: T, times: number): T[] => {
+//     // error 不能将类型“{ <T>(arg: T, times: number): T[]; tag: string; }”分配给类型“GetArray<number>”。
+//     // 属性“tag”的类型不兼容。
+//     return new Array(times).fill(arg);
+// };
+// getArray.tag = "a"; // 不能将类型“"a"”分配给类型“number”
+// getArray("a", 1); // 类型“"a"”的参数不能赋给类型“number”的参数
+
+// 上面例子中将泛型变量定义在接口最外层，所以不仅函数的类型中可以使用 T，在属性 tag 的定义中也可以使用。但在使用接口的时候，要在接口名后面明确传入一个类型，也就是这里的GetArray<number>，那么后面的 arg 和 tag 的类型都得是 number 类型。当然了，如果你还是希望 T 可以是任何类型，你可以把GetArray<number>换成GetArray<any>。
+
+
+/**
+ * @泛型约束
+ */
+// 当我们使用了泛型时，就意味着这个这个类型是任意类型。但在大多数情况下，我们的逻辑是对特定类型处理的。还记得我们前面讲泛型变量时举的那个例子——当访问一个泛型类型的参数的 length 属性时，会报错"类型“T”上不存在属性“length”"，是因为并不是所有类型都有 length 属性。
+
+// 所以我们在这里应该对 T 有要求，那就是类型为 T 的值应该包含 length 属性。说到这个需求，你应该能想到接口的使用，我们可以使用接口定义一个对象必须有哪些属性：
+// interface ValueWithLength {
+//     length: number;
+// }
+// const v: ValueWithLength = {}; // Property 'length' is missing in type '{}' but required in type 'ValueWithLength'
+
+// 泛型约束就是使用一个类型和extends对泛型进行约束，之前的例子就可以改为下面这样：
+// interface ValueWithLength {
+//     length: number;
+// }
+// const getLength = <T extends ValueWithLength>(param: T): number => {
+//     console.log(param.length);
+//     return param.length;
+// };
+// getLength("abc"); // 3
+// getLength([1, 2, 3]); // 3
+// getLength({length: 3}); // 3
+// getLength(123); // 类型“123”的参数不能赋给类型“ValueWithLength”的参数
+// 这个例子中，泛型变量T受到约束。它必须满足接口ValueWithLength，也就是不管它是什么类型，但必须有一个length属性，且类型为数值类型。例子中后面四次调用getLength方法，传入了不同的值，传入字符串"abc"、数组[1, 2, 3]和一个包含length属性的对象{ length: 3 }都是可以的，但是传入数值123不行，因为它没有length属性。
+
+/**
+ * @在泛型约束中使用类型参数
+ */
+// 当我们定义一个对象，想要对只能访问对象上存在的属性做要求时，该怎么办？先来看下这个需求是什么样子：
+// const getProps = (object, propName) => {
+//     return object[propName];
+// };
+// const obj = {a: "aa", b: "bb"};
+// getProps(obj, "c"); // undefined
+
+// 当我们访问这个对象的’c’属性时，这个属性是没有的。这里我们需要用到索引类型keyof结合泛型来实现对这个问题的检查。索引类型在高级类型一节会详细讲解，这里你只要知道这个例子就可以了：
+// const getProp = <T, K extends keyof T>(object: T, propName: K) => {
+//     return object[propName];
+// };
+// const obj = {a: "aa", b: "bb"};
+// getProp(obj, "a");
+// getProp(obj, "c"); // 类型“"c"”的参数不能赋给类型“"a" | "b"”的参数
+
+// 这里我们使用让K来继承索引类型keyof T，你可以理解为keyof T相当于一个由泛型变量T的属性名构成的联合类型，在这里 K 就被约束为了只能是"a"或"b"，所以当我们传入字符串"c"想要获取对象obj的属性"c"时就会报错。
+
