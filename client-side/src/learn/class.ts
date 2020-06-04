@@ -166,4 +166,96 @@
 // console.log(Parent.age); // 18
 
 // 如果使用了 private 修饰道理和之前的一样：
+// class Parent {
+//     public static getAge() {
+//         return Parent.age;
+//     }
+//     private static age: number = 18;
+//     constructor() {
+//         //
+//     }
+// }
+// const p = new Parent();
+// console.log(p.age); // Property 'age' is a static member of type 'Parent'
+// console.log(Parent.age); // 属性“age”为私有属性，只能在类“Parent”中访问
+
+
+/**
+ * @可选类属性
+ */
+// TS 在 2.0 版本，支持可选类属性，也是使用?符号来标记，来看例子：
+// class Info {
+//     name: string;
+//     age?: number;
+//     constructor(name: string, age?: number, public sex?: string) {
+//         this.name = name;
+//         this.age = age;
+//     }
+// }
+// const info1 = new Info("lison");
+// const info2 = new Info("lison", 12);
+// const info3 = new Info("lison", 18, "man");
+
+/**
+ * @存取器
+ */
+// 这个也就 ES6 标准中的存值函数和取值函数，也就是在设置属性值的时候调用的函数，和在访问属性值的时候调用的函数，用法和写法和 ES6 的没有区别：
+// class UserInfo {
+//     private _fullName!: string;
+//     constructor() {}
+//     get fullName() {
+//         return this._fullName;
+//     }
+//     set fullName(value) {
+//         console.log(`setter: ${value}`);
+//         this._fullName = value;
+//     }
+// }
+// const user = new UserInfo();
+// user.fullName = "Lison Li"; // "setter: Lison Li"
+// console.log(user.fullName); // Lison Li
+
+
+/**
+ * @抽象类
+ */
+// 抽象类一般用来被其他类继承，而不直接用它创建实例。抽象类和类内部定义抽象方法，使用abstract关键字，我们先来看个例子：
+// abstract class People {
+//     constructor(public name: string) {
+        
+//     }
+//     abstract printName(): void;
+// }
+// class Man extends People {
+//     constructor(name: string) {
+//         super(name);
+//         this.name = name;
+//     }
+//     printName() {
+//         console.log(this.name);
+//     }
+// }
+// const m = new Man(); // 应有 1 个参数，但获得 0 个
+// const man = new Man("lison");
+// man.printName(); // "lison"
+// const p = new People("lison"); // 无法创建抽象类的实例
+
+// 上面例子中我们定义了一个抽象类 People，在抽象类里我们定义 constructor 方法必须传入一个字符串类型参数，并把这个 name 参数值绑定在创建的实例上；使用abstract关键字定义一个抽象方法 printName，这个定义可以指定参数，指定参数类型，指定返回类型。当我们直接使用抽象类 People 实例化的时候，就会报错，我们只能创建一个继承抽象类的子类，使用子类来实例化。
+
+// 我们再来看个例子：
+// abstract class People {
+//     constructor(name: string) {}
+//     abstract printName(): void;
+// }
+// class Man extends People {
+//     // 非抽象类“Man”不会实现继承自“People”类的抽象成员"printName"
+//     constructor(name: string) {
+//         super(name);
+//         this.name = name;
+//     }
+// }
+// const m = new Man("lison");
+// m.printName(); // m.printName is not a function
+
+// 通过上面的例子我们可以看到，在抽象类里定义的抽象方法，在子类中是不会继承的，所以在子类中必须实现该方法的定义。
 
