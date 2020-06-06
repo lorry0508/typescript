@@ -259,3 +259,62 @@
 
 // 通过上面的例子我们可以看到，在抽象类里定义的抽象方法，在子类中是不会继承的，所以在子类中必须实现该方法的定义。
 
+// 2.0 版本开始，abstract关键字不仅可以标记类和类里面的方法，还可以标记类中定义的属性和存取器：
+
+// abstract class People {
+//     abstract _name: string;
+//     abstract get insideName(): string;
+//     abstract set insideName(value: string);
+// }
+// class Pp extends People {
+//     _name: string;
+//     insideName: string;
+// }
+
+// 但是要记住，抽象方法和抽象存取器都不能包含实际的代码块。
+
+/**
+ * @实例类型
+ */
+// // 当我们定义一个类，并创建实例后，这个实例的类型就是创建他的类：
+// class People {
+//     constructor(public name: string) {}
+// }
+// let p: People = new People("lison");
+
+// 当然了，创建实例的时候这指定 p 的类型为 People 并不是必须的，TS 会推断出他的类型。虽然指定了类型，但是当我们再定义一个和 People 类同样实现的类 Animal，并且创建实例赋值给 p 的时候，是没有问题的：
+// class Animal {
+//     constructor(public name: string) {}
+// }
+// let p = new Animal("lison");
+
+// 所以，如果你想实现对创建实例的类的判断，还是需要用到instanceof关键字。
+
+
+
+/**
+ * @对前面跳过知识的补充
+ */
+// 现在我们把之前因为没有学习类的使用，所以暂时跳过的内容补回来。
+
+// (1)类类型接口
+// // 使用接口可以强制一个类的定义必须包含某些内容，先来看个例子：
+// interface FoodInterface {
+//     type: string;
+// }
+// class FoodClass implements FoodInterface {
+//     // Property 'type' is missing in type 'FoodClass' but required in type 'FoodInterface'
+//     static type: string;
+//     constructor() {}
+// }
+
+// 上面接口 FoodInterface 要求使用该接口的值必须有一个 type 属性，定义的类 FoodClass 要使用接口，需要使用关键字implements。implements关键字用来指定一个类要继承的接口，如果是接口和接口、类和类直接的继承，使用extends，如果是类继承接口，则用implements。
+
+// 有一点需要注意，接口检测的是使用该接口定义的类创建的实例，所以上面例子中虽然定义了静态属性 type，但静态属性不会添加到实例上，所以还是报错，所以我们可以这样改：
+interface FoodInterface {
+    type: string;
+}
+class FoodClass implements FoodInterface {
+    constructor(public type: string) {}
+}
+// 当然这个需求你也可以使用本节课学习的抽象类实现：
