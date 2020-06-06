@@ -1,4 +1,4 @@
-import "./learn/class";
+import "./learn/compatible";
 
 
 const h1 = document.createElement("h1");
