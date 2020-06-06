@@ -176,3 +176,50 @@
 // const other: Parent = new Other(); //不能将类型“Other”分配给类型“Parent”
 
 // 可以看到，当指定 other 为 Parent 类类型，给 other 赋值 Other 创建的实例的时候，会报错。因为 Parent 的 age 属性是私有成员，外界是无法访问到的，所以会类型不兼容。而children的类型我们指定为了Parent类类型，然后给它赋值为Children类的实例，没有问题，是因为Children类继承Parent类，且实例属性没有差异，Parent类有私有属性age，但是因为Children类继承了Parent类，所以可以赋值。
+
+// 同样，使用 protected 受保护修饰符修饰的属性，也是一样的。
+// class Parent {
+//     protected age: number;
+//     constructor() {}
+// }
+// class Children extends Parent {
+//     constructor() {
+//        super();
+//     }
+// }
+// class Other {
+//     protected age: number;
+//     constructor() {}
+// }
+// const children: Parent = new Children();
+// const other: Parent = new Other(); // 不能将类型“Other”分配给类型“Parent”
+
+/**
+ * 泛型
+ */
+// 泛型包含类型参数，这个类型参数可能是任意类型，使用时类型参数会被指定为特定的类型，而这个类型只影响使用了类型参数的部分。来看例子：
+// interface Data<T> {};
+// let data1: Data<number>;
+// let data2: Data<string>;
+// data1 = data2;
+
+// 在这个例子中，data1 和 data2 都是 Data 接口的实现，但是指定的泛型参数的类型不同，TS 是结构性类型系统，所以上面将 data2 赋值给 data1 是兼容的，因为 data2 指定了类型参数为 string 类型，但是接口里没有用到参数 T，所以传入 string 类型还是传入 number 类型并没有影响。我们再来举个例子看下：
+// interface Data<T> {
+//     data: T;
+// }
+// let data1: Data<number>;
+// let data2: Data<string>;
+// data1 = data2; // 不能将类型“Data<string>”分配给类型“Data<number>”
+
+// 现在结果就不一样了，赋值时报错，因为 data1 和 data2 传入的泛型参数类型不同，生成的结果结构是不兼容的。
+
+/**
+ * @小结
+ */
+// 能够影响函数兼容性的因素有：
+// 1.函数参数个数： 如果对函数 y 进行赋值，那么要求 x 中的每个参数都应在 y 中有对应，也就是 x 的参数个数小于等于 y 的参数个数；
+// 2.函数参数类型： 这一点其实和基本的赋值兼容性没差别，只不过比较的不是变量之间而是参数之间；
+// 3.剩余参数和可选参数： 当要被赋值的函数参数中包含剩余参数（…args）时，赋值的函数可以用任意个数参数代替，但是类型需要对应，可选参数效果相似；
+// 4.函数参数双向协变： 即参数类型无需绝对相同；
+// 5.函数返回值类型： 这一点和函数参数类型的兼容性差不多，都是基础的类型比较；
+// 6.函数重载： 要求被赋值的函数每个重载都能在用来赋值的函数上找到对应的签名。
