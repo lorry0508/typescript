@@ -311,10 +311,39 @@
 // 上面接口 FoodInterface 要求使用该接口的值必须有一个 type 属性，定义的类 FoodClass 要使用接口，需要使用关键字implements。implements关键字用来指定一个类要继承的接口，如果是接口和接口、类和类直接的继承，使用extends，如果是类继承接口，则用implements。
 
 // 有一点需要注意，接口检测的是使用该接口定义的类创建的实例，所以上面例子中虽然定义了静态属性 type，但静态属性不会添加到实例上，所以还是报错，所以我们可以这样改：
-interface FoodInterface {
-    type: string;
-}
-class FoodClass implements FoodInterface {
-    constructor(public type: string) {}
-}
-// 当然这个需求你也可以使用本节课学习的抽象类实现：
+// interface FoodInterface {
+//     type: string;
+// }
+// class FoodClass implements FoodInterface {
+//     constructor(public type: string) {}
+// }
+
+// // 当然这个需求你也可以使用本节课学习的抽象类实现：
+// abstract class FoodAbstarctClass {
+//     abstract type: string;
+// }
+// class Food extends FoodAbstarctClass {
+//     constructor (public type: string) {
+//         super();
+//     }
+// }
+
+// (2)接口继承类
+// 接口可以继承一个类，当接口继承了该类后，会继承类的成员，但是不包括其实现，也就是只继承成员以及成员类型。接口还会继承类的private和protected修饰的成员，当接口继承的这个类中包含这两个修饰符修饰的成员时，这个接口只可被这个类或他的子类实现。
+// class A {
+//     protected name: string;
+// }
+// interface I extends A {};
+// class B implements I {}; //Property 'name' is missing in type 'B' but required in type 'I'
+// class C implements I {
+//     // 属性“name”受保护，但类型“C”并不是从“A”派生的类
+//     name: string;
+// }
+// class D extends A implements I {
+//     getName() {
+//         return this.name;
+//     }
+// }
+
+// (3) 在泛型中使用类类型
+// 这里我们先来看个例子：
