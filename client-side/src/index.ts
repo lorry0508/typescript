@@ -1,4 +1,4 @@
-import "./learn/assign";
+import "./learn/monotonousType";
 
 
 const h1 = document.createElement("h1");
