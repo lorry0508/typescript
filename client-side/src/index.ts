@@ -1,4 +1,4 @@
-import "./learn/monotonousType";
+import "./learn/mapping";
 
 
 const h1 = document.createElement("h1");

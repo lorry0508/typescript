@@ -95,6 +95,9 @@
 // };
 
 // 这里补充一个比较经典的逻辑错误，来看例子：
-// function getValue(index: number) {
-//     if()
-// }
+function getValue(index: number) {
+    if(index !== 0 || index !== 1) {
+        // This condition will always return 'true' since the types '0' and '1' have no overlap
+    }
+}
+// 这个例子中，在判断逻辑处使用了 || 符，当 index !== 0 不成立时，说明 index 就是 0，则不应该再判断 index 是否不等于 1；而如果 index !== 0 成立，那后面的判断也不会再执行；所以这个地方会报错。
