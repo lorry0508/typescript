@@ -59,7 +59,7 @@ class History extends React.Component<IProps> {
         <View style={styles.right}>
           <Text style={styles.title}>{item.title}</Text>
           <Text numberOfLines={1} style={{color: '#999', marginVertical: 10}}>
-            在水一方
+            在水一方 修改过 2020/06/08
           </Text>
           <View style={{flexDirection: 'row'}}>
             <Text style={styles.text}>
