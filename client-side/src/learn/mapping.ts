@@ -66,3 +66,101 @@
 // 	return res;
 // }
 // const nameAndAddress = pick(info, ["name", "address"]); // { name: 'lison', address: 'beijing' }
+
+// 另外一个就是 Record，它适用于将一个对象中的每一个属性转换为其他值的场景，来看例子：
+// function mapObject<K extends string | number, T, U>(
+// 	obj: Record<K, T>,
+// 	f: (x: T) => U
+// ):Record<K, U> {
+// 	let res = {} as Record<K, U>;
+// 	for(const key in obj) {
+// 		res[key] = f(obj[key]);
+// 	}
+// 	console.log(res);
+// 	return res;
+// }
+
+// const names = {
+// 	0: "hello",
+// 	1: "world",
+// 	2: "bye"
+// };
+// const lengths = mapObject(names, s => s.length); // {0: 5, 1: 5; 2: 3}
+
+// 我们输入的对象属性值为字符串类型，输出的对象属性值为数值类型。
+
+// 讲完这四个内置的映射类型之后，我们需要讲一个概念——同态。同态在维基百科的解释是：两个相同类型的代数结构之间的结构保持映射。这四个内置映射类型中，Readonly、Partial 和 Pick 是同态的，而 Record 不是，因为 Record 映射出的对象属性值是新的，和输入的值的属性值不同。
+
+
+/**
+ * @由映射类型进行推断
+ */
+// 我们学习了使用映射类型包装一个类型的属性后，也可以进行逆向操作，也就是拆包，先来看我们的包装操作：
+// type Proxy<T> = { // 这里定义一个映射类型，他将一个属性拆分成get/set方法
+// 	get(): T;
+// 	set(value: T): void;
+// };
+// type Proxify<T> = {
+// 	[P in keyof T]: Proxy<T[P]>;  // 这里再定义一个映射类型，将一个对象的所有属性值类型都变为Proxy<T>处理之后的类型
+// };
+// function proxify<T>(obj: T): Proxify<T> { // 这里定义一个proxify函数，用来将对象中所有属性的属性值改为一个包含get和set方法的对象
+// 	let result = {} as Proxify<T>;
+// 	for(const key in obj) {
+// 		result[key] = {
+// 			get: () => obj[key],
+// 			set: value => (obj[key] = value)
+// 		};
+// 	}
+// 	return result;
+// }
+// let props = {
+// 	name: "lison",
+// 	age: 18
+// };
+// let proxProps = proxify(props);
+// console.log(proxProps.name.get()); // "lison"
+// proxProps.name.set("li");
+
+// 我们来看下这个例子，这个例子我们定义了一个函数，这个函数可以把传入的对象的每个属性的值替换为一个包含 get 和 set 两个方法的对象。最后我们获取某个值的时候，比如 name，就使用 proxyProps.name.get()方法获取它的值，使用 proxyProps.name.set()方法修改 name 的值。
+
+// 接下来我们来看如何进行拆包：
+// function unproxify<T>(t: Proxify<T>): T{ // 这里我们定义一个拆包函数，其实就是利用每个属性的get方法获取到当前属性值，然后将原本是包含get和set方法的对象改为这个属性值
+// 	let result = {} as T;
+// 	for(const k in t) {
+// 		result[k] = t[k].get(); // 这里通过调用属性值这个对象的get方法获取到属性值，然后赋给这个属性，替换掉这个对象
+// 	}
+// 	return result;
+// }
+// let originalProps = unproxify(proxProps);
+
+
+/**
+ * @增加或移除特定修饰符
+ */
+// TS 在 2.8 版本为映射类型增加了增加或移除特定修饰符的能力，使用+和-符号作为前缀来指定增加还是删除修饰符。首先来看我们如何通过映射类型为一个接口的每个属性增加修饰符，我们这里使用+前缀：
+// interface Info {
+// 	name: string;
+// 	age: number;
+// }
+// type ReadonlyInfo<T> = { +readonly [P in keyof T] + ?: T[P] };
+// let info: ReadonlyInfo<Info> = {
+// 	name: "lison"
+// };
+// info.name = ""; // Cannot assign to 'name' because it is a read-only property
+
+// 这个例子中，经过 ReadonlyInfo 创建的接口类型，属性是可选的，所以我们在定义 info 的时候没有写 age 属性也没问题，同时每个属性是只读的，所以我们修改 name 的值的时候报错。我们通过+前缀增加了 readonly 和?修饰符。当然，增加的时候，这个+前缀可以省略，也就是说，上面的写法和type ReadonlyInfo = { readonly [P in keyof T]?: T[P] }是一样的。我们再来看下怎么删除修饰符：
+// interface Info {
+// 	name: string;
+// 	age: number;
+// }
+// type RemoveModifier<T> = { -readonly [P in keyof T] - ? : T[P]};
+// type InfoType = RemoveModifier<Readonly<Partial<Info>>>;
+// let info1: InfoType = {
+// 	// missing "age"
+// 	name: "Lison"
+// };
+// let info2: InfoType = {
+// 	name: "lison",
+// 	age: 18
+// };
+// info2.name = "";
