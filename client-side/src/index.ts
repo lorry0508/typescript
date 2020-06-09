@@ -1,4 +1,4 @@
-import "./learn/mapping";
+import "./learn/factor";
 
 
 const h1 = document.createElement("h1");

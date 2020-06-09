@@ -164,3 +164,66 @@
 // 	age: 18
 // };
 // info2.name = "";
+
+// 这个例子我们定义了去掉修饰符的映射类型 RemoveModifier，Readonly<Partial<Info>>则是返回一个既属性可选又只读的接口类型，所以 InfoType 类型则表示属性必含而且非只读。
+
+// TS 内置了一个映射类型Required<T>，使用它可以去掉 T 所有属性的?修饰符。
+
+/**
+ * @keyof和映射类型在2.9的升级
+ */
+// TS 在 2.9 版本中，keyof 和映射类型支持用 number 和 symbol 命名的属性，我们先来看 keyof 的例子：
+// const stringIndex = "a";
+// const numberIndex = 1;
+// const symbolIndex = Symbol();
+// type Obj = {
+// 	[stringIndex]: string;
+// 	[numberIndex]: number;
+// 	[symbolIndex]: symbol;
+// };
+// type keys = keyof Obj;
+// let key1: keys = 2; // 不能将类型“2”分配给类型“"a" | 1 | unique symbol”
+// let key2: keys = 1; // right
+// let key3: keys = "b"; // error
+// let key4: keys = "a"; // right
+// let key5: keys = Symbol(); //error
+// let key6: keys = symbolIndex; // right
+
+// 再来看个映射类型的例子：
+// const stringIndex = "a";
+// const numberIndex = 1;
+// const symbolIndex = Symbol();
+// type Obj = {
+// 	[stringIndex]: string;
+// 	[numberIndex]: number;
+// 	[symbolIndex]: symbol;
+// };
+// type ReadonlyType<T> = {
+// 	readonly [P in keyof T] ? : T[P];
+// }
+// let obj: ReadonlyType<Obj> = {
+// 	a: "aa",
+// 	1: 11,
+// 	[symbolIndex]: Symbol()
+// };
+// obj.a = "bb"; // Cannot assign to 'a' because it is a read-only property
+// obj[1] = 22; // Cannot assign to '1' because it is a read-only property
+// obj[symbolIndex] = Symbol(); // Cannot assign to '[symbolIndex]' because it is a read-only property
+
+/**
+ * @元组和数组上的映射类型
+ */
+// TS 在 3.1 版本中，在元组和数组上的映射类型会生成新的元组和数组，并不会创建一个新的类型，这个类型上会具有 push、pop 等数组方法和数组属性。来看例子：
+// type MapToPromise<T> = {
+// 	[K in keyof T]: Promise<T[K]>
+// };
+// type Tuple = [number, string, boolean];
+// type promiseTuple = MapToPromise<Tuple>;
+// let tuple: promiseTuple = [
+// 	new Promise((resolve, reject) => resolve(1)),
+// 	new Promise((resolve, reject) => resolve("a")),
+// 	new Promise((resolve, reject) => resolve(false))
+// ];
+
+// 这个例子中定义了一个MapToPromise映射类型。它返回一个将传入的类型的所有字段的值转为Promise，且Promise的resolve回调函数的参数类型为这个字段类型。我们定义了一个元组Tuple，元素类型分别为number、string和boolean，使用MapToPromise映射类型将这个元组类型传入，并且返回一个promiseTuple类型。当我们指定变量tuple的类型为promiseTuple后，它的三个元素类型都是一个Promise，且resolve的参数类型依次为number、string和boolean。
+
