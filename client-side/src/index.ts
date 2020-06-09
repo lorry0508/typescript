@@ -1,4 +1,4 @@
-import "./learn/decorator";
+import "./learn/modulePackage";
 
 
 const h1 = document.createElement("h1");
