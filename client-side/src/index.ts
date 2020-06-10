@@ -1,4 +1,4 @@
-import "./learn/statement";
+import "./learn/mixins";
 
 
 const h1 = document.createElement("h1");

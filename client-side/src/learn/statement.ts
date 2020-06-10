@@ -86,4 +86,79 @@
 //     export const checkString = () => {}
 // }
 
+// 在命名空间里，有时我们并不是把所有内容都对外部可见，对于没有导出的内容，在其它同名命名空间内是无法访问的：
+// namespace Validation {
+//     const numberReg = /^[0-9]+$/
+//     export const stringReg = /^[A-Za-z]+$/
+//     export const checkString = () => {}
+// }
+// namespace Validation {
+//     export const checkNumber = (value: any) => {
+//         return numberReg.test(value) // error 找不到名称“numberReg”
+//     }
+// }
 
+// 上面定义的两个命名空间，numberReg没有使用export导出，所以在第二个同名命名空间内是无法使用的，如果给 const numberReg 前面加上 export，就可以在第二个命名空间使用了。
+
+/**
+ * @不同类型合并
+ */
+// 命名空间分别和类、函数、枚举都可以合并，下面我们来一一说明：
+// (1) 命名空间和类
+// 这里要求同名的类和命名空间在定义的时候，类的定义必须在命名空间前面，最后合并之后的效果，一个包含一些以命名空间导出内容为静态属性的类，来看例子：
+// class Validation {
+//     checkType() {}
+// }
+// namespace Validation {
+//     export const numberReg = /^[0-9]+$/
+//     export const stringReg = /^[A-Za-z]+$/
+//     export const checkString = () => {}
+// }
+// namespace Validation {
+//     export const checkNumber = (value: any) => {
+//         return numberReg.test(value);
+//     }
+// }
+// console.log(Validation.prototype); // {checkType: ƒ ()}
+// console.log(Validation.prototype.constructor);
+// /**
+// {
+//     checkNumber: ...
+//     checkString: ...
+//     numberReg: ...
+//     stringReg: ...
+// }
+// */
+
+// (2) 命名空间和函数
+// 在JavaScript中，函数也是对象，所以可以给一个函数设置属性，在TypeScript中，就可以通过声明合并实现。但同样要求，函数的定义要在同名命名空间前面，我们再拿之前讲过的计数器的实现来看下，如何利用声明合并实现计数器的定义：
+// function countUp() {
+//     countUp.count++
+// }
+// namespace countUp {
+//     export let count = 0
+// }
+// countUp()
+// countUp()
+// console.log(countUp.count); // 2
+
+// (3) 命名空间和枚举
+// 可以通过命名空间和枚举的合并，为枚举拓展内容，枚举和同名命名空间的先后顺序是没有要求的，来看例子：
+// enum Colors {
+//     red,
+//     green,
+//     blue
+// }
+// namespace Colors {
+//     export const yellow = 3
+// }
+// console.log(Colors); 
+/* {0: "red"
+1: "green"
+2: "blue"
+blue: 2
+green: 1
+red: 0
+yellow: 3} */
+
+// 通过打印结果你可以发现，虽然我们使用命名空间增加了枚举的成员，但是最后输出的值只有key到index的映射，没有index到key的映射。
