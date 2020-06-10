@@ -1,4 +1,4 @@
-import "./learn/modulePackage";
+import "./learn/statement";
 
 
 const h1 = document.createElement("h1");
