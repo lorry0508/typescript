@@ -1,4 +1,4 @@
-import "./learn/mixins";
+import "./learn/promise";
 
 
 const h1 = document.createElement("h1");
