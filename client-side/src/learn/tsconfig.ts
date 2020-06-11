@@ -133,3 +133,65 @@ tsc ./src/main.ts */
 // noFallthroughCasesInSwitch
 // noFallthroughCasesInSwitch 的值为 true 或 false，用于检查 switch 中是否有 case 没有使用 break 跳出 switch，默认为 false。
 
+
+// 接下来是模块解析相关的：
+// moduleResolution
+// moduleResolution 用于选择模块解析策略，有"node"和"classic"两种类型，我们在讲模块解析的时候已经讲过了。
+
+// baseUrl
+// baseUrl 用于设置解析非相对模块名称的基本目录，这个我们在讲《模块和命名空间》的“模块解析配置项”一节时已经讲过了，相对模块不会受 baseUrl 的影响。
+
+// paths
+// paths 用于设置模块名到基于 baseUrl 的路径映射，我们前面也讲过，比如这样配置：
+/* {
+    "compilerOptions": {
+      "baseUrl": ".", // 如果使用paths，必须设置baseUrl
+      "paths": {
+        "jquery": ["node_modules/jquery/dist/jquery"] // 此处映射是相对于"baseUrl"
+      }
+    }
+} */
+// 还有当我们要为没有声明文件的第三方模块写声明文件时，我们可以先如下设置：
+/* {
+  "compilerOptions": {
+    "baseUrl": ".", // 如果使用paths，必须设置baseUrl
+    "paths": {
+      "*": ["./node_modules/@types/*", "./typings/*"]
+    }
+  }
+} */
+// 然后在 tsconfig.json 文件所在的目录里建一个 typings 文件夹，然后为要写声明文件的模块建一个同名文件夹，比如我们要为 make-dir 这个模块写声明文件，那么就在 typings 文件夹下新建一个文件夹，命名为 make-dir，然后在 make-dir 文件夹新建一个 index.d.ts 声明文件来为这个模块补充声明。
+
+// rootDirs
+// rootDirs 可以指定一个路径列表，在构建时编译器会将这个路径列表中的路径内容都放到一个文件夹中，我们在前面也学习了。
+
+// typeRoots
+// typeRoots 用来指定声明文件或文件夹的路径列表，如果指定了此项，则只有在这里列出的声明文件才会被加载。
+
+// types
+// types 用来指定需要包含的模块，只有在这里列出的模块声明文件才会被加载进来。
+
+// allowSyntheticDefaultImports
+// allowSyntheticDefaultImports 的值为 true 或 false，用来指定允许从没有默认导出的模块中默认导入。
+
+
+// 接下来的是 source map 的一些配置项：
+// sourceRoot
+// sourceRoot 用于指定调试器应该找到 TypeScript 文件而不是源文件位置，这个值会被写进.map 文件里。
+
+// mapRoot
+// mapRoot 用于指定调试器找到映射文件而非生成文件的位置，指定 map 文件的根路径，该选项会影响.map 文件中的 sources 属性。
+
+// inlineSourceMap
+// inlineSourceMap 值为 true 或 false，指定是否将 map 文件的内容和 js 文件编译在同一个 js 文件中。如果设为 true，则 map 的内容会以//# sourceMappingURL=然后接 base64 字符串的形式插入在 js 文件底部。
+
+// inlineSources
+// inlineSources 的值是 true 或 false，用于指定是否进一步将.ts 文件的内容也包含到输出文件中。
+
+
+// 最后还有两个其他的配置项：
+// experimentalDecorators
+// experimentalDecorators 的值是 true 或 false，用于指定是否启用实验性的装饰器特性，我们在讲装饰器的时候已经学习过了。
+
+// emitDecoratorMetadata
+// emitDecoratorMetadata 的值为 true 或 false，用于指定是否为装饰器提供元数据支持。关于元数据，也是 ES6 的新标准，可以通过 Reflect 提供的静态方法获取元数据，如果需要使用 Reflect 的一些方法，需要引入 ES2015.Reflect 这个库。
