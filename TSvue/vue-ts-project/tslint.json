@@ -14,7 +14,6 @@
     "no-consecutive-blank-lines": false,
     "object-literal-sort-keys": false,
     "ordered-imports": false,
-    "quotemark": [true, "single"],
-    "no-shadowed-variable": false
+    "quotemark": [true, "single"]
   }
 }
