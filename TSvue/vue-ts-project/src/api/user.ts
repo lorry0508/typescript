@@ -12,3 +12,10 @@ export const loginReq = (data: LoginReqArguInterface): AxiosPromise<ResponseData
         method: 'POST'
     })
 }
+
+export const getInfoReq = (): AxiosPromise<ResponseData> => {
+    return axios.request({
+        url: '/api/user/get_info',
+        method: 'GET',
+    })
+}
