@@ -1,18 +1,26 @@
 <template>
-  <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
-  </div>
+	<div class="home">
+		home页面
+	</div>
 </template>
 
-<script>
-// @ is an alias to /src
-import HelloWorld from '@/components/HelloWorld.vue'
+<script lang="ts">
+import { Vue, Component } from 'vue-property-decorator'
+import { loginReq } from '@/api/user';
 
-export default {
-  name: 'Home',
-  components: {
-    HelloWorld
-  }
+@Component({
+    name: 'HomePage',
+    components: {
+
+    }
+})
+
+export default class Home extends Vue {
+    public mounted() {
+        loginReq({ user_name: 'Lison', password: 123 })
+        .then((res) => {
+            console.log(res.data.code);
+        })
+    }
 }
 </script>
